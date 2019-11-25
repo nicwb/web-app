@@ -1,8 +1,19 @@
 version: '3'
 services:
+  pgsql-db-faculty:
+    restart: always
+    image: postgres:10
+    volumes: 
+      - ../pgsql-db-faculty/:/docker-entrypoint-initdb.d/
+    ports:
+      - 5432:5432
+    expose:
+      - "5432"
   spring-cloud-config:
     restart: always
     image: spring-cloud-config:1.0
+    depends_on:
+      - pgsql-db-faculty
     ports:
       - 8888:8888
     expose:
@@ -22,6 +33,7 @@ services:
     depends_on:
       - spring-cloud-config
       - netflix-eureka
+      - pgsql-db-faculty
     ports:
       - 9100:9100
     expose:
@@ -48,6 +60,3 @@ services:
       - 8765:8765
     expose:
       - "8765"
-      
-      
-      
